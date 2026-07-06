@@ -26,6 +26,39 @@ A human is always in the loop before anything goes out — the marketer
 reviews the drafts and either approves them or sends back edits for another
 pass.
 
+## Example
+
+**Input** (submitted in the intake form):
+> Title: *Noche de Aniversario con DJ XX*
+> Content: *Nos emociona anunciar que DJ XX estará en Sabs Bar este...*
+> Format: Press Release
+
+![Intake form](screenshots/post-1-intake-form.png)
+
+**Generated press release:**
+> **Noche de Aniversario con DJ XX at Sabs Bar**
+> Join us at Sabs Bar on May 1st to celebrate our anniversary with an
+> exciting night featuring DJ XX! Enjoy great music, excellent cocktails,
+> and a lively atmosphere as we mark another year together with our
+> community. We look forward to seeing you on the dance floor. Don't miss
+> out! 📍 Sabs Bar 🗓 May 1 #SabsBar #Anniversary #DJXX #Nightlife #LiveDJ
+
+![Review form, pending edits](screenshots/post-2-review-form-pending.png)
+
+**After a review round** (edit request: "add more wild and emojis..."),
+the social post came back as:
+> 🎉🎶 Get ready to dance the night away at our anniversary bash with DJ XX
+> at Sabs Bar! 💃🕺 Let the beats electrify you as you sip on our signature
+> cocktails and soak in the vibrant atmosphere! 🍹🎵 Join us for a wild
+> night you won't forget! 📍✨ Sabs Bar 🗓 May 1 #SabsBar #Anniversary
+> #DJXX #Nightlife #LiveDJ
+
+![Review form, approved](screenshots/post-3-review-form-approved.png)
+
+Once approved, the final draft is delivered by email:
+
+![Delivered email draft](screenshots/post-4-email-delivery.png)
+
 ## How it works
 
 **1. Intake** — A form (`On form submission`) collects: Title, Content,
@@ -104,39 +137,6 @@ release / social drafting, editing), `gpt-5` (translation).
 **Social media sub-agent:**
 
 ![Social media sub-agent flow](screenshots/flow-subagent-socialmedia.png)
-
-## Example
-
-**Input** (submitted in the intake form):
-> Title: *Noche de Aniversario con DJ XX*
-> Content: *Nos emociona anunciar que DJ XX estará en Sabs Bar este...*
-> Format: Press Release
-
-![Intake form](screenshots/post-1-intake-form.png)
-
-**Generated press release:**
-> **Noche de Aniversario con DJ XX at Sabs Bar**
-> Join us at Sabs Bar on May 1st to celebrate our anniversary with an
-> exciting night featuring DJ XX! Enjoy great music, excellent cocktails,
-> and a lively atmosphere as we mark another year together with our
-> community. We look forward to seeing you on the dance floor. Don't miss
-> out! 📍 Sabs Bar 🗓 May 1 #SabsBar #Anniversary #DJXX #Nightlife #LiveDJ
-
-![Review form, pending edits](screenshots/post-2-review-form-pending.png)
-
-**After a review round** (edit request: "add more wild and emojis..."),
-the social post came back as:
-> 🎉🎶 Get ready to dance the night away at our anniversary bash with DJ XX
-> at Sabs Bar! 💃🕺 Let the beats electrify you as you sip on our signature
-> cocktails and soak in the vibrant atmosphere! 🍹🎵 Join us for a wild
-> night you won't forget! 📍✨ Sabs Bar 🗓 May 1 #SabsBar #Anniversary
-> #DJXX #Nightlife #LiveDJ
-
-![Review form, approved](screenshots/post-3-review-form-approved.png)
-
-Once approved, the final draft is delivered by email:
-
-![Delivered email draft](screenshots/post-4-email-delivery.png)
 
 ## Setup
 
