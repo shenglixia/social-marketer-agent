@@ -1,0 +1,696 @@
+{
+  "name": "PR main agent",
+  "nodes": [
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"social_media_body\", \"press_release_title\", \"press_release_body\"],\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"social_media_body\": { \"type\": \"string\", \"description\": \"One-paragraph social post. May be empty.\" },\n    \"press_release_title\": { \"type\": \"string\", \"description\": \"Short headline. May be empty.\" },\n    \"press_release_body\": { \"type\": \"string\", \"description\": \"Press release body text (headline NOT duplicated). May be empty.\" }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        432
+      ],
+      "id": "3db7a460-b5d6-4912-886a-17c24c68aecc",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        288
+      ],
+      "id": "f82f4715-b424-4d1b-a51d-0cb1a04cad08",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1z7JacpLCyofNbAu",
+          "name": "OpenAi account 62"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to write English-language press releases.",
+        "workflowId": {
+          "__rl": true,
+          "value": "nbegyyeK4II6Uc3o",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nbegyyeK4II6Uc3o",
+          "cachedResultName": "xia recite 3 press release"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}",
+            "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('title', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "text"
+          ],
+          "schema": [
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        432
+      ],
+      "id": "94df3a8f-3f22-4aa1-8ffd-50c64c435755",
+      "name": "Press Release"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to write English-language social media posts.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ghheh6X3xx3avUmh",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ghheh6X3xx3avUmh",
+          "cachedResultName": "xia recite 3 social"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "text"
+          ],
+          "schema": [
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        432
+      ],
+      "id": "28e34c5c-a08c-4d70-a396-9af5306444e3",
+      "name": "Social Media"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title:  {{ $json.Title }}\nContent: {{ $json.Content }}\nFormat(s): {{ $json.Format }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Act as a communications specialist with expertise in community organizing and Latine public engagement, targeting a diverse audience of Latine immigrants.\n\nUsing the content provided, your role is to use your tools to create English-language social media posts and/or press releases (based on the formats) that are both accessible and engaging. \n\nWhen the format includes social media, use the Social Media tool to write posts. Similarly, use the Press Release tool to write press releases. Do not write these posts/press releases yourself; always use the tools to do so."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        48
+      ],
+      "id": "bfe398f0-9da7-4039-97ee-c7e471e2dad5",
+      "name": "First Draft Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.submittedAt }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        288
+      ],
+      "id": "cc7585e0-a0c5-429b-b2f7-959a49fe1dad",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "formTitle": "Communications Posts",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Content",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Format",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Press Release"
+                  },
+                  {
+                    "option": "Social Media Post"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your name",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "e56d76d0-d47f-4287-b0b9-c9f7f24b6805",
+      "name": "On form submission",
+      "webhookId": "b020cfdb-1b8d-45a1-a02a-838a27a95d04"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"social_media_body\", \"press_release_title\", \"press_release_body\"],\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"social_media_body\": { \"type\": \"string\", \"description\": \"One-paragraph social post. May be empty.\" },\n    \"press_release_title\": { \"type\": \"string\", \"description\": \"Short headline. May be empty.\" },\n    \"press_release_body\": { \"type\": \"string\", \"description\": \"Press release body text (headline NOT duplicated). May be empty.\" }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1680,
+        560
+      ],
+      "id": "ed33700b-8a8b-43dc-9b5d-5dc70a604c29",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "resume": "form",
+        "formTitle": "Post Edit Form",
+        "formDescription": "=Press Release Title: {{ $json.output.press_release_title }}\n\nPress Release Body: {{ $json.output.press_release_body }}\n\nSocial Media Body: {{ $json.output.social_media_body }}",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Approved?",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Edits",
+              "placeholder": "Add edits here"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        224
+      ],
+      "id": "6ecfe9b3-5c10-4d92-a4f6-1e739ffab283",
+      "name": "Wait",
+      "webhookId": "d7b8fbd7-19e3-407f-8609-d4c82381669e"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1472,
+        560
+      ],
+      "id": "8ed2b3d7-3ab5-41c4-b03a-26dedc8180e1",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "1z7JacpLCyofNbAu",
+          "name": "OpenAi account 62"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6505b52-8c6a-4cd2-9c61-a1df48c5d8bc",
+              "leftValue": "={{ $json[\"Approved?\"] }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        224
+      ],
+      "id": "82869d1a-5986-49aa-aa20-312cf059876e",
+      "name": "Approved?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        816,
+        224
+      ],
+      "id": "bac8bd0f-2fe0-4467-8187-3e3de0a2883a",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title: {{ $('Merge').item.json.output.press_release_title }}\nPress Release body:{{ $('Merge').item.json.output.press_release_body }}\nSocial Media body: {{ $('Merge').item.json.output.social_media_body }}\nEdits: {{ $json.Edits }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Act as a communications specialist with expertise in community organizing and Latine public engagement, targeting a diverse audience of Latine immigrants throughout the greater Chicago area.\n\nYou will be given messages as well as edits that are wanted. Using this, your role is to edit the messages given to reflect these changes and return them to the user. These will be press releases and social media posts associated with community organizing and Latine public engagement, targeting a diverse audience of Latine immigrants throughout Evanston and the broader Chicago area.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        304
+      ],
+      "id": "e08c6728-09ef-4946-b56a-56681893440e",
+      "name": "Editor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ceb4881-fe73-4b14-933c-644d65201a7d",
+              "leftValue": "={{ $('On form submission').item.json.Format }}",
+              "rightValue": "Social Media Post",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        80
+      ],
+      "id": "1e3a28ce-993e-4a56-baf7-a74fe90305ea",
+      "name": "Needs Spanish translation?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Text: {{ $('Merge').item.json.output.social_media_body }}",
+        "options": {
+          "systemMessage": "Act as a professional English-Spanish translator and communications specialist with expertise in community organizing and Latine public engagement. You will be provided with English-language text that needs to be translated to Spanish. Use Latin American Spanish, targeting a diverse audience of Latine immigrants throughout Evanston and the broader Chicago area. Use an approachable tone for social media outreach but be sure to use “usted” instead of “tú” unless told otherwise. Use terminology widely understood by Spanish-speaking immigrants from a range of Latin American countries including Mexico, El Salvador, Ecuador, and beyond."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        -32
+      ],
+      "id": "8d351f51-57ad-4e75-a35f-04dd441cf2c5",
+      "name": "Translator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "reasoningEffort": "low"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2384,
+        112
+      ],
+      "id": "e1eabcbf-02bd-4366-9711-bc00b1c42006",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "1z7JacpLCyofNbAu",
+          "name": "OpenAi account 62"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "Draft of Post",
+        "emailType": "text",
+        "message": "=Press Release title: {{ $('Merge').item.json.output.press_release_title }}\n\nPress Release body: {{ $('Merge').item.json.output.press_release_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2448,
+        240
+      ],
+      "id": "5053fd90-2693-498a-a637-4350149dfad8",
+      "name": "Send a message (no Spanish)",
+      "webhookId": "5541a481-a428-46b1-891b-967e41f8c545",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "u1ralAn8urPndcx2",
+          "name": "Gmail account 45"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "Draft of Post",
+        "emailType": "text",
+        "message": "=Press Release title: {{ $('Merge').item.json.output.press_release_title }}\n\nPress Release body: {{ $('Merge').item.json.output.press_release_body }}\n\nPost body (English): {{ $('Merge').item.json.output.social_media_body }}\n\nPost body (Spanish): {{ $('Translator').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2704,
+        -32
+      ],
+      "id": "28569ce9-b55b-4ad3-b3a1-f69be3e97e1f",
+      "name": "Send a message (with Spanish)",
+      "webhookId": "5541a481-a428-46b1-891b-967e41f8c545",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "u1ralAn8urPndcx2",
+          "name": "Gmail account 45"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Press Release": {
+      "ai_tool": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social Media": {
+      "ai_tool": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "First Draft Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Editor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved?": {
+      "main": [
+        [
+          {
+            "node": "Needs Spanish translation?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Editor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "First Draft Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Spanish translation?": {
+      "main": [
+        [
+          {
+            "node": "Translator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message (no Spanish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translator": {
+      "main": [
+        [
+          {
+            "node": "Send a message (with Spanish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Translator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "14e86c71-f133-4096-b654-5b85abdd0fd3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc2f41b0f3697394e32470f5727b760961a15df0a6ed2f8c99e372996569754a"
+  },
+  "nodeGroups": [],
+  "id": "6dhxPjJO0cSwIh2o",
+  "tags": []
+}

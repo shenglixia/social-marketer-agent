@@ -1,0 +1,170 @@
+{
+  "name": "PR - press release",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "text"
+            },
+            {
+              "name": "title"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        64
+      ],
+      "id": "7c794ce4-7c6e-4eb5-b13f-c132ba25be61",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"press_release_title\", \"press_release_body\"],\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"press_release_title\": { \"type\": \"string\", \"description\": \"Short headline.\" },\n    \"press_release_body\": { \"type\": \"string\", \"description\": \"Press release body text (headline NOT duplicated).\" }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        272
+      ],
+      "id": "0e5d4ec7-d0f7-46bb-bfe4-26b90b3a0e1a",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        272
+      ],
+      "id": "2b195c79-695e-436f-9782-6bce49e537b9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1z7JacpLCyofNbAu",
+          "name": "OpenAi account 62"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9625122e-1bc8-4230-a6e0-ae94b835f49b",
+              "name": "press_release_body",
+              "value": "={{ $json.output.press_release_body }}\n\nEvanston Immigrant Rights is an organization founded in 2020 that works to strengthen civic engagement, fight discrimination, and foster economic opportunity for Latine families.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "output.press_release_title",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        64
+      ],
+      "id": "315449e7-c0f7-4d8f-b81c-8207c5bfea90",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Text: {{ $json.text }}\nTitle: {{ $json.title }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Act as a communications specialist with expertise in community organizing and Latine public engagement, targeting a diverse audience of Latine immigrants.\n\nUsing the content provided, your role is to create English-language press releases following AP format that are both accessible and engaging. These should be professional and ready to send to news outlets.\n\n*Do not write in Spanish; this will later be translated.*"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        64
+      ],
+      "id": "1cb04d2b-3fc4-4ab8-ad5b-0282fcbfd225",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0a9168f3-ab5a-414e-87e5-ed605b2bc68b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc2f41b0f3697394e32470f5727b760961a15df0a6ed2f8c99e372996569754a"
+  },
+  "nodeGroups": [],
+  "id": "nbegyyeK4II6Uc3o",
+  "tags": []
+}
